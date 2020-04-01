@@ -15,12 +15,21 @@ use Cwd qw(abs_path);
 
 ## IMPORTANT: Set the paths to folder with the NCBI executables and to the
 ## sequence database
-my $NCBI_DIR = "/scratch0/NOT_BACKED_UP/dbuchan/Applications/blast-2.2.26/bin/";
-my $SEQ_DB = "/scratch0/NOT_BACKED_UP/dbuchan/uniref/uniref_test_db/uniref_test.fasta";
+my $ROOT = dirname(__FILE__);
+my $NCBI_DIR = join "/", $ROOT, "blast-2.2.26", "bin";
+my $SEQ_DB = join "/", $ROOT, "data", "uniref90", "uniref90.fasta";
+
 
 ## IMPORTANT: Changing these flags will alter the behaviour of blastpgp
 ## You may want to use -a n to speed-up the search using n processors, if available
-my $PSIBLAST_PAR = "-a 1 -b 0 -j 3 -h 0.001";
+if (!-e $ARGV[1]) {
+	print "Number of threads has not been specified. Running with default (1).";
+	my $processors = 1;
+} else {
+	my $processors = $ARGV[1];
+}
+
+my $PSIBLAST_PAR = join " ", "-a", $processors, "-b 0 -j 3 -h 0.001";
 
 ## IMPORTANT: Moving the bin/, data, or dso_lib directories to a different location will cause the programs
 ## to crash, unless you change the variables below accordingly
