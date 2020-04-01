@@ -16,17 +16,16 @@ use Cwd qw(abs_path);
 ## IMPORTANT: Set the paths to folder with the NCBI executables and to the
 ## sequence database
 my $ROOT = dirname(__FILE__);
-my $NCBI_DIR = join "/", $ROOT, "blast-2.2.26", "bin";
+my $NCBI_DIR = join "/", $ROOT, "blast-2.2.26", "bin/";
 my $SEQ_DB = join "/", $ROOT, "data", "uniref90", "uniref90.fasta";
-
 
 ## IMPORTANT: Changing these flags will alter the behaviour of blastpgp
 ## You may want to use -a n to speed-up the search using n processors, if available
-if (!-e $ARGV[1]) {
+my $processors = 1;
+if (@ARGV < 2) {
 	print "Number of threads has not been specified. Running with default (1).";
-	my $processors = 1;
 } else {
-	my $processors = $ARGV[1];
+	$processors = $ARGV[1];
 }
 
 my $PSIBLAST_PAR = join " ", "-a", $processors, "-b 0 -j 3 -h 0.001";
@@ -42,7 +41,6 @@ exists $ENV{DSO_LIB_PATH} or die "[$0] ERROR: DSO_LIB_PATH environmental variabl
 my $DISO2_FPR = 5; # the adjustable DISOPRED2 false positive rate, represented as an integer between 1 and 10
 
 # check whether the command line contains only one argument
-die "[$0] ERROR: The command line should only contain the path to the input sequence file\n" if ( scalar @ARGV != 1);
 
 # die if input file does not exist or is not a text file
 die "[$0] ERROR: Input file $ARGV[0] does not exist\n"  if !-e $ARGV[0];
